@@ -1,11 +1,11 @@
 import { Platform } from 'react-native';
 
-// Use your actual IP address for both iOS and Android physical devices
-export const API_URL = 'http://172.16.1.97:8001';
+// Update to match the actual running backend server port (8000)
+export const API_URL = 'http://172.16.4.116:8000';
 
-// The following is the default config which works for simulators/emulators
+// Comment out the Platform.select since we'll use a direct IP
 // export const API_URL = Platform.select({
-//   ios: 'http://localhost:8000',  // Use localhost for iOS simulator
-//   android: 'http://10.0.2.2:8000', // Android emulator uses this special IP for localhost
-//   default: 'http://localhost:8000',
+//ios: 'http://localhost:8001',      // iOS simulator uses localhost
+//   android: 'http://10.0.2.2:8001',   // Android emulator uses 10.0.2.2 for localhost
+//   default: 'http://localhost:8001',
 // }); 

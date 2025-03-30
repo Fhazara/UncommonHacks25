@@ -15,21 +15,23 @@ export default function App() {
           initialRouteName="Profile"
           screenOptions={{
             headerStyle: {
-              backgroundColor: '#2563eb',
+              backgroundColor: '#3b82f6',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
               fontWeight: 'bold',
+              fontSize: 22,
             },
+            headerShadowVisible: true,
           }}
         >
           <Stack.Screen 
             name="Profile" 
             component={Profile}
-            options={{ title: 'Healthcare Profile' }}
+            options={{ title: 'MediScan' }}
           />
         </Stack.Navigator>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
       </View>
     </NavigationContainer>
   );
@@ -38,6 +40,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#f0f9ff',
   },
 });

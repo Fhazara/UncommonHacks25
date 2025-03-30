@@ -45,11 +45,31 @@ export default function DrugAnalysis() {
     }
   };
 
+  const handleDeleteMedication = (index: number) => {
+    const updatedMedications = [...medications];
+    updatedMedications.splice(index, 1);
+    setMedications(updatedMedications);
+  };
+
+  const clearMedications = () => {
+    setMedications([]);
+  };
+
   const handleAddSymptom = () => {
     if (newSymptom.trim()) {
       setSymptoms([...symptoms, newSymptom.trim()]);
       setNewSymptom('');
     }
+  };
+
+  const handleDeleteSymptom = (index: number) => {
+    const updatedSymptoms = [...symptoms];
+    updatedSymptoms.splice(index, 1);
+    setSymptoms(updatedSymptoms);
+  };
+  
+  const clearSymptoms = () => {
+    setSymptoms([]);
   };
 
   const handleSubmit = async () => {
@@ -216,6 +236,15 @@ export default function DrugAnalysis() {
           {medications.map((med, index) => (
             <Text key={index} style={styles.listItem}>• {med}</Text>
           ))}
+          
+          {medications.length > 0 && (
+            <TouchableOpacity
+              style={styles.dangerButton}
+              onPress={clearMedications}
+            >
+              <Text style={styles.dangerButtonText}>CLEAR ALL MEDICATIONS</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.inputSection}>
@@ -244,9 +273,19 @@ export default function DrugAnalysis() {
               <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>
+          
           {symptoms.map((symptom, index) => (
             <Text key={index} style={styles.listItem}>• {symptom}</Text>
           ))}
+          
+          {symptoms.length > 0 && (
+            <TouchableOpacity
+              style={styles.dangerButton}
+              onPress={clearSymptoms}
+            >
+              <Text style={styles.dangerButtonText}>CLEAR ALL SYMPTOMS</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity
@@ -274,7 +313,7 @@ export default function DrugAnalysis() {
               <View style={styles.advancedAnalysisSection}>
                 <Text style={styles.sectionTitle}>AI-Powered Advanced Analysis</Text>
                 
-                {results.advanced_analysis.advanced_conflicts?.length > 0 && (
+                {results.advanced_analysis.advanced_conflicts && results.advanced_analysis.advanced_conflicts.length > 0 && (
                   <View style={styles.aiAnalysisSection}>
                     <Text style={styles.aiSectionTitle}>Advanced Drug Interactions</Text>
                     {results.advanced_analysis.advanced_conflicts.map((conflict, index) => (
@@ -300,7 +339,7 @@ export default function DrugAnalysis() {
                   </View>
                 )}
                 
-                {results.advanced_analysis.diagnosis_contradictions?.length > 0 && (
+                {results.advanced_analysis && results.advanced_analysis.diagnosis_contradictions && results.advanced_analysis.diagnosis_contradictions.length > 0 && (
                   <View style={styles.aiAnalysisSection}>
                     <Text style={styles.aiSectionTitle}>Potential Contradictions with Diagnosis</Text>
                     {results.advanced_analysis.diagnosis_contradictions.map((item, index) => (
@@ -312,7 +351,7 @@ export default function DrugAnalysis() {
                   </View>
                 )}
                 
-                {results.advanced_analysis.additional_warnings?.length > 0 && (
+                {results.advanced_analysis && results.advanced_analysis.additional_warnings && results.advanced_analysis.additional_warnings.length > 0 && (
                   <View style={styles.aiAnalysisSection}>
                     <Text style={styles.aiSectionTitle}>Additional Warnings</Text>
                     {results.advanced_analysis.additional_warnings.map((warning, index) => (
@@ -328,7 +367,7 @@ export default function DrugAnalysis() {
                   </View>
                 )}
                 
-                {results.advanced_analysis.analysis && (
+                {results.advanced_analysis && results.advanced_analysis.analysis && (
                   <View style={styles.aiAnalysisSection}>
                     <Text style={styles.aiSectionTitle}>Analysis</Text>
                     <View style={styles.aiCard}>
@@ -337,7 +376,7 @@ export default function DrugAnalysis() {
                   </View>
                 )}
                 
-                {results.advanced_analysis.error && (
+                {results.advanced_analysis && results.advanced_analysis.error && (
                   <View style={styles.aiAnalysisSection}>
                     <Text style={styles.aiSectionTitle}>Analysis Error</Text>
                     <View style={styles.errorCard}>
@@ -583,11 +622,39 @@ const styles = StyleSheet.create({
     color: '#2563eb',
     fontWeight: 'bold',
   },
-  listItem: {
-    fontSize: 16,
-    color: '#4b5563',
-    marginLeft: 8,
-    marginBottom: 4,
+  pillList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  pillContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e0f2fe',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  pillText: {
+    fontSize: 14,
+    color: '#0369a1',
+    marginRight: 6,
+  },
+  pillDeleteButton: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#ef4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pillDeleteText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   submitButton: {
     backgroundColor: '#2563eb',
@@ -1004,5 +1071,118 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 14,
     color: '#b91c1c',
+  },
+  medItemList: {
+    marginTop: 8,
+    marginBottom: 5,
+  },
+  medItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+  },
+  medItemBullet: {
+    width: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  medItemBulletText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2563eb',
+  },
+  medItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1e40af',
+    marginLeft: 5,
+  },
+  medDeleteButton: {
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 6,
+    marginLeft: 10,
+  },
+  medDeleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1e40af',
+    marginBottom: 10,
+  },
+  bigRedButton: {
+    backgroundColor: '#ef4444',
+    padding: 14,
+    borderRadius: 8,
+    marginBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  bigButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  medItem: {
+    backgroundColor: '#e0f2fe',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#93c5fd',
+  },
+  medText: {
+    fontSize: 16,
+    color: '#1e40af',
+    fontWeight: '500',
+  },
+  clearAllButton: {
+    backgroundColor: '#dc2626',
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  clearAllButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dangerButton: {
+    backgroundColor: '#dc2626',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  dangerButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  listItem: {
+    fontSize: 16,
+    color: '#4b5563',
+    marginLeft: 8,
+    marginBottom: 4,
   },
 }); 
