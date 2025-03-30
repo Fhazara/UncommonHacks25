@@ -27,6 +27,16 @@ export default function SymptomAnalysis() {
     }
   };
 
+  const handleDeleteSymptom = (index: number) => {
+    const updatedSymptoms = [...symptoms];
+    updatedSymptoms.splice(index, 1);
+    setSymptoms(updatedSymptoms);
+  };
+
+  const clearSymptoms = () => {
+    setSymptoms([]);
+  };
+
   const handleSubmit = async () => {
     if (!symptoms.length || !diagnosis) {
       Alert.alert('Error', 'Please fill in all required fields');
@@ -103,9 +113,19 @@ export default function SymptomAnalysis() {
               <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>
+          
           {symptoms.map((symptom, index) => (
             <Text key={index} style={styles.listItem}>• {symptom}</Text>
           ))}
+          
+          {symptoms.length > 0 && (
+            <TouchableOpacity
+              style={styles.dangerButton}
+              onPress={clearSymptoms}
+            >
+              <Text style={styles.dangerButtonText}>CLEAR ALL SYMPTOMS</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity
@@ -136,12 +156,8 @@ export default function SymptomAnalysis() {
 
             <View style={styles.alternativesSection}>
               <Text style={styles.sectionTitle}>AI-Powered Differential Diagnosis</Text>
-              {results.analysis && results.analysis.alternatives ? (
+              {results.analysis && results.analysis.alternatives.length > 0 ? (
                 results.analysis.alternatives.map((alt) => renderAlternative(alt))
-              ) : results.analysis && results.analysis.error ? (
-                <View style={styles.errorCard}>
-                  <Text style={styles.errorText}>{results.analysis.error}</Text>
-                </View>
               ) : (
                 <View style={styles.noResultsContainer}>
                   <Text style={styles.noResultsText}>No alternative diagnoses found</Text>
@@ -196,11 +212,47 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
   },
-  listItem: {
+  medItemList: {
+    marginTop: 8,
+    marginBottom: 5,
+  },
+  medItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+  },
+  medItemBullet: {
+    width: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  medItemBulletText: {
     fontSize: 16,
-    color: '#4b5563',
-    marginLeft: 8,
-    marginBottom: 4,
+    fontWeight: 'bold',
+    color: '#2563eb',
+  },
+  medItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1e40af',
+    marginLeft: 5,
+  },
+  medDeleteButton: {
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 6,
+    marginLeft: 10,
+  },
+  medDeleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
   submitButton: {
     backgroundColor: '#2563eb',
@@ -334,5 +386,76 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 16,
     color: '#6b7280',
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1e40af',
+    marginBottom: 10,
+  },
+  bigRedButton: {
+    backgroundColor: '#ef4444',
+    padding: 14,
+    borderRadius: 8,
+    marginBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  bigButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  medItem: {
+    backgroundColor: '#e0f2fe',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#93c5fd',
+  },
+  medText: {
+    fontSize: 16,
+    color: '#1e40af',
+    fontWeight: '500',
+  },
+  clearAllButton: {
+    backgroundColor: '#dc2626',
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  clearAllButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dangerButton: {
+    backgroundColor: '#dc2626',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  dangerButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  listItem: {
+    fontSize: 16,
+    color: '#4b5563',
+    marginLeft: 8,
+    marginBottom: 4,
   },
 }); 
