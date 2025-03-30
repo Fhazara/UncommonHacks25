@@ -1,13 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional, Dict, Any, Union
 import httpx
 import json
 import socket
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+import re
 
 # Load environment variables
 load_dotenv()
@@ -60,6 +61,12 @@ class SymptomAnalysisRequest(BaseModel):
     diagnosis: str
     symptoms: List[str]
 
+# Add new model for email requests
+class EmailRequest(BaseModel):
+    to: str  # Recipient email
+    subject: str
+    message: str
+
 async def analyze_with_gemini(drug_infos: List[DrugInfo], prompt: str) -> Dict:
     """
     Use Gemini API to analyze drug interactions and conflicts
@@ -111,15 +118,25 @@ async def generate_differential_diagnosis(symptoms: List[str], diagnosis: str) -
     
     The current diagnosis is: {diagnosis}
     
-    Please generate a list of potential alternative diagnoses that could explain these symptoms.
-    For each alternative diagnosis, provide:
-    1. Condition name
-    2. A similarity score (0.0 to 1.0) representing how well the symptoms match
-    3. Which specific symptoms match this condition
-    4. A brief explanation for why this could be an alternative diagnosis
+    Please provide:
+    
+    1. A similarity assessment for the current diagnosis, including:
+       - A similarity score (0.0 to 1.0) representing how well the symptoms match the diagnosis
+       - Which specific symptoms match this diagnosis 
+       - A brief assessment of the current diagnosis given the symptoms
+    
+    2. A list of potential alternative diagnoses that could explain these symptoms.
+       For each alternative diagnosis, provide:
+       - Condition name
+       - A similarity score (0.0 to 1.0) representing how well the symptoms match
+       - Which specific symptoms match this condition
+       - A brief explanation for why this could be an alternative diagnosis
     
     Your response must be a valid JSON object with this exact structure:
     {{
+        "diagnosis_similarity": 0.8,
+        "matching_symptoms": ["symptom1", "symptom2"],
+        "diagnosis_assessment": "Brief assessment of current diagnosis",
         "alternatives": [
             {{
                 "condition": "Condition Name",
@@ -518,4 +535,37 @@ async def get_drug_adverse_events(drug_name: str, limit: int = 10):
             
             return {"events": events}
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error fetching adverse events: {str(e)}") 
+            raise HTTPException(status_code=500, detail=f"Error fetching adverse events: {str(e)}")
+
+# Add a new route for sending emails
+@app.post("/api/send-email")
+async def send_email(request: EmailRequest):
+    """Send an email using the Resend API."""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                json={
+                    "from": "onboarding@resend.dev",
+                    "to": [request.to],
+                    "subject": request.subject,
+                    "text": request.message,
+                },
+                headers={
+                    "Authorization": f"Bearer {os.getenv('RESEND_API_KEY', 're_hACDUtKw_LPzVNMs2NRe2Ha8unonruPJy')}",
+                    "Content-Type": "application/json"
+                },
+                timeout=10.0
+            )
+            
+            response_data = response.json()
+            
+            if response.status_code == 200:
+                return {"success": True, "message": "Email sent successfully", "data": response_data}
+            else:
+                print(f"Resend API error: {response.status_code} - {response.text}")
+                return {"success": False, "message": f"Failed to send email: {response_data.get('message', 'Unknown error')}", "data": response_data}
+                
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return {"success": False, "message": f"Error sending email: {str(e)}"} 
