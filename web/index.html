@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedSafe — Drug Interaction Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      MedSafe
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-page="home">Home</button>
+      <button class="nav-btn" data-page="drugs">Drug Analysis</button>
+      <button class="nav-btn" data-page="symptoms">Symptom Analysis</button>
+      <button class="nav-btn" data-page="search">Drug Search</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
+  </nav>
+
+  <!-- ── PAGES ── -->
+  <main class="page-container">
+
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <div class="hero-badge">AI-Powered Healthcare Tool</div>
+        <h1>Understand Your Medications</h1>
+        <p class="hero-sub">
+          MedSafe uses the FDA drug database and Google Gemini AI to detect drug
+          interactions, analyze symptoms, and provide plain-language explanations—
+          helping you make more informed healthcare decisions.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-primary" data-page="drugs">Analyze Drugs</button>
+          <button class="btn-secondary" data-page="symptoms">Check Symptoms</button>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" data-page="drugs">
+          <div class="feature-icon drug-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v3"/>
+              <circle cx="18" cy="18" r="3"/>
+              <path d="m22 22-1.5-1.5"/>
+            </svg>
+          </div>
+          <h3>Drug Interactions</h3>
+          <p>Check for dangerous combinations across your full medication list using live FDA data enhanced by AI.</p>
+          <span class="feature-link">Start analysis →</span>
+        </div>
+
+        <div class="feature-card" data-page="symptoms">
+          <div class="feature-icon symptom-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <h3>Symptom Analysis</h3>
+          <p>Describe your symptoms and get a differential diagnosis with similarity scores from Gemini AI.</p>
+          <span class="feature-link">Analyze symptoms →</span>
+        </div>
+
+        <div class="feature-card" data-page="search">
+          <div class="feature-icon search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <h3>Drug Lookup</h3>
+          <p>Search the FDA database for detailed drug information, warnings, contraindications, and adverse events.</p>
+          <span class="feature-link">Search drugs →</span>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>For informational purposes only. Always consult a licensed healthcare professional before making medical decisions.</span>
+      </div>
+    </section>
+
+    <!-- DRUG ANALYSIS -->
+    <section id="page-drugs" class="page">
+      <div class="page-header">
+        <h2>Drug Interaction Analysis</h2>
+        <p>Enter your medications, diagnosis, and symptoms for a comprehensive interaction check.</p>
+      </div>
+
+      <div class="card form-card">
+        <div class="form-group">
+          <label>Medications</label>
+          <div class="tag-input-row">
+            <input id="drug-input" type="text" placeholder="Type a medication name and press Enter or Add" />
+            <button class="btn-add" id="drug-add-btn">Add</button>
+          </div>
+          <div class="tag-list" id="drug-tags"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="drug-diagnosis">Diagnosis</label>
+          <input id="drug-diagnosis" type="text" placeholder="e.g. Type 2 Diabetes" />
+        </div>
+
+        <div class="form-group">
+          <label>Symptoms</label>
+          <div class="tag-input-row">
+            <input id="drug-symptom-input" type="text" placeholder="Type a symptom and press Enter or Add" />
+            <button class="btn-add" id="drug-symptom-add-btn">Add</button>
+          </div>
+          <div class="tag-list" id="drug-symptom-tags"></div>
+        </div>
+
+        <button class="btn-primary btn-full" id="drug-analyze-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+          Analyze Interactions
+        </button>
+      </div>
+
+      <div id="drug-results" class="results-container hidden"></div>
+    </section>
+
+    <!-- SYMPTOM ANALYSIS -->
+    <section id="page-symptoms" class="page">
+      <div class="page-header">
+        <h2>Symptom Analysis</h2>
+        <p>Get a differential diagnosis with AI-calculated similarity scores.</p>
+      </div>
+
+      <div class="card form-card">
+        <div class="form-group">
+          <label for="symptom-diagnosis">Current Diagnosis</label>
+          <input id="symptom-diagnosis" type="text" placeholder="e.g. Hypertension" />
+        </div>
+
+        <div class="form-group">
+          <label>Symptoms</label>
+          <div class="tag-input-row">
+            <input id="symptom-input" type="text" placeholder="Type a symptom and press Enter or Add" />
+            <button class="btn-add" id="symptom-add-btn">Add</button>
+          </div>
+          <div class="tag-list" id="symptom-tags"></div>
+        </div>
+
+        <button class="btn-primary btn-full" id="symptom-analyze-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Analyze Symptoms
+        </button>
+      </div>
+
+      <div id="symptom-results" class="results-container hidden"></div>
+    </section>
+
+    <!-- DRUG SEARCH -->
+    <section id="page-search" class="page">
+      <div class="page-header">
+        <h2>Drug Search</h2>
+        <p>Search the FDA database for detailed drug information.</p>
+      </div>
+
+      <div class="card form-card">
+        <div class="form-group">
+          <label for="search-input">Drug Name</label>
+          <div class="tag-input-row">
+            <input id="search-input" type="text" placeholder="e.g. Aspirin, Metformin, Lisinopril" />
+            <button class="btn-primary" id="search-btn">Search</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="search-results" class="results-container hidden"></div>
+    </section>
+
+  </main>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <p id="loading-text">Analyzing with FDA data + AI…</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>MedSafe · Built with FastAPI &amp; Gemini AI · Data from FDA OpenAPI</p>
+    <p>Not a substitute for professional medical advice.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
